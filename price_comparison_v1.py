@@ -1,5 +1,6 @@
 import pandas
 import random
+import numpy
 
 
 # Functions go here
@@ -37,20 +38,18 @@ def instructions():
 
     print('''
     
-For each ticket holder enter ...
-- Their name
-- Their age
+For each buyer enter ...
+- name of the cheese
+- budget
 - The payment method (cash / credit)
 
-The program will record the ticket sale and calculate the
-ticket cost (and the profit).
+The program will record the purchases and calculate the cost.
 
-Once you have either sold all of the tickets or entered the 
-exit code ('xxx'), the program will display the ticket
-sales information and write the data to a text file.
+Users can buy multiple cheeses or enter the 
+exit code ('xxx'), and the program will end
 
-It will also choose one lucky ticket holder who wins the
-draw (their ticket is free).
+It will finally show an itemised list of all the purchases and will save it
+to a writing file
 
     ''')
 
@@ -99,34 +98,42 @@ def currency(x):
 
 # Main Routine goes here
 
-# Initialise ticket numbers
-MAX_TICKETS = 5
-tickets_sold = 0
+# Initialise cheese numbers
+MAX_BUDGET = 600
+cheese_sold = 0
 
 # initialise variables / non-default options for string checker
 payment_ans = ('cash', 'credit')
 
 # Ticket Price List
-CHILD_PRICE = 7.50
-ADULT_PRICE = 10.50
-SENIOR_PRICE = 6.50
+# CHILD_PRICE = 7.50
+# ADULT_PRICE = 10.50
+# SENIOR_PRICE = 6.50
 
 # Credit card surcharge (currently 5%)
-CREDIT_SURCHARGE = 0.05
+# CREDIT_SURCHARGE = 0.05
 
 # lists to hold ticket details
-all_names = []
-all_ticket_costs = []
-all_surcharges = []
+all_cheese = ["Colby", "Mozzarella", "Cheddar", "Gouda", "Brie",
+              "Manchego", "Roquefort", "Parmigiano Reggiano",
+              "Époisses de Bourgogne", "Pule Cheese"]
+all_cheese_costs = [20, 30, 35, 40, 60, 80, 100, 150, 200, 300]
+# all_surcharges = [0, 0, 0.53, 0.53, 0]
 
-mini_movie_dict = {
-    'Name': all_names,
-    'Ticket Price': all_ticket_costs,
-    'Surcharge': all_surcharges
+cheese_dict = {
+    'Cheese': all_cheese,
+    'Cheese Price': all_cheese_costs,
+    # 'Surcharge': all_surcharges
 }
 
+# create dataframe / table from dictionary
+cheese_frame = pandas.DataFrame(cheese_dict)
+
+# Rearranging index
+cheese_frame.index = numpy.arange(1, len(cheese_frame) + 1)
+
 # Program main heading
-print(make_statement("Mini-Movie Fundraiser Program", "🍿"))
+print(make_statement("The Online Cheese Market", "🧀"))
 
 # Ask user if they want to see the instructions
 # display them if necessary
@@ -139,7 +146,7 @@ if want_instructions == "yes":
 print()
 
 # Loop to get name, age and payment details
-while tickets_sold < MAX_TICKETS:
+while cheese_sold < MAX_BUDGET:
     # Ask user for their name (and check it's not blank)
     print()
     name = not_blank("Name: ")
@@ -157,20 +164,20 @@ while tickets_sold < MAX_TICKETS:
         continue
 
     # Child ticket price ($7.50)
-    elif age < 16:
-        ticket_price = CHILD_PRICE
+    # elif age < 16:
+        # ticket_price = CHILD_PRICE
 
     # Adult ticket ($10.50)
-    elif age < 65:
-        ticket_price = ADULT_PRICE
+    # elif age < 65:
+        # ticket_price = ADULT_PRICE
 
     # Senior Citizen ticket ($6.50)
-    elif age < 121:
-        ticket_price = SENIOR_PRICE
+    # elif age < 121:
+        # ticket_price = SENIOR_PRICE
 
-    else:
-        print(f"{name} is too old")
-        continue
+    # else:
+        # print(f"{name} is too old")
+        # continue
 
     # Ask user for payment method (cash / credit / ca / cr)
     pay_method = string_check("Payment method: ", payment_ans, 2)
@@ -179,47 +186,44 @@ while tickets_sold < MAX_TICKETS:
         surcharge = 0
 
     # if paying by credit, calculate surcharge
-    else:
-        surcharge = ticket_price * CREDIT_SURCHARGE
+    # else:
+        # surcharge = cheese_price  * CREDIT_SURCHARGE
 
     # add name, ticket cost and surcharge to
-    all_names.append(name)
-    all_ticket_costs.append(ticket_price)
-    all_surcharges.append(surcharge)
+    all_cheese.append(name)
+    all_cheese_costs.append(cheese_price)
+    # all_surcharges.append(surcharge)
 
-    tickets_sold += 1
+    cheese_sold += 1
 
 # End of Ticket Loop
 
-# create dataframe / table from dictionary
-mini_movie_frame = pandas.DataFrame(mini_movie_dict)
-
 # Calculate the total payable for each ticket
-mini_movie_frame['Total'] = mini_movie_frame['Ticket Price'] + mini_movie_frame['Surcharge']
-mini_movie_frame['Profit'] = mini_movie_frame['Ticket Price'] - 5
+cheese_frame['Total'] = cheese_frame['Ticket Price']  # + mini_movie_frame['Surcharge']
+cheese_frame['Profit'] = cheese_frame['Ticket Price'] - 5
 
 # Work out total paid and total profit...
-total_paid = mini_movie_frame['Total'].sum()
-total_profit = mini_movie_frame['Profit'].sum()
+total_paid = cheese_frame['Total'].sum()
+total_profit = cheese_frame['Profit'].sum()
 
 # choose random winner...
-winner = random.choice(all_names)
+winner = random.choice(all_cheese)
 
 # find index of winner (ie: position in list)
-winner_index = all_names.index(winner)
+winner_index = all_cheese.index(winner)
 
 # retrieve Winner Ticket Price and Profit (so we can adjust
 # profit numbers so that the winning ticket is excluded)
-ticket_won = mini_movie_frame.at[winner_index, 'Total']
-profit_won = mini_movie_frame.at[winner_index, 'Profit']
+ticket_won = cheese_frame.at[winner_index, 'Total']
+profit_won = cheese_frame.at[winner_index, 'Profit']
 
 # Currency Formatting (uses currency function)
 add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
 for var_item in add_dollars:
-    mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
+    cheese_frame[var_item] = cheese_frame[var_item].apply(currency)
 
-# Output movie frame without index
-mini_movie_string = mini_movie_frame.to_string(index=False)
+# Output cheese frame without index
+cheese_string = cheese_frame.to_string(index=False)
 
 total_paid_string = f"Total Paid: ${total_paid:.2f}"
 total_profit_string = f"Total Profit: ${total_profit:.2f}"
@@ -230,12 +234,12 @@ lucky_winner_string = (f"The lucky winner is {winner}. "
 final_total_paid_string = f"Total Paid is now ${total_paid - ticket_won:.2f}"
 final_profit_string = f"Total Profit is now ${total_profit - profit_won:.2f}"
 
-if tickets_sold == MAX_TICKETS:
+if cheese_sold == MAX_BUDGET:
     num_sold_string = make_statement(f"You have sold all the tickets "
-                                     f"(ie: {MAX_TICKETS} tickets)", "-")
+                                     f"(ie: {MAX_BUDGET} tickets)", "-")
 else:
-    num_sold_string = make_statement(f"You have sold {tickets_sold} / "
-                                     f"{MAX_TICKETS} tickets.", "-")
+    num_sold_string = make_statement(f"You have sold {cheese_sold} / "
+                                     f"{MAX_BUDGET} tickets.", "-")
 
 # Additional strings / Headings
 heading_string = make_statement("Mini Movie Fundraiser", "=")
@@ -250,7 +254,7 @@ adjusted_explanation = (f"We have given away a ticket worth ${ticket_won:.2f} wh
 # List of strings to be outputted / written to file
 to_write = [heading_string, "\n",
             ticket_details_heading,
-            mini_movie_string, "\n",
+            cheese_string, "\n",
             total_paid_string,
             total_profit_string, "\n",
             raffle_heading,
@@ -267,7 +271,7 @@ for item in to_write:
     print(item)
 
 # create file to hold data (add .txt extension)
-file_name = "MMF_ticket_details"
+file_name = "price_comparison_ticket_details"
 write_to = f"{file_name}.txt"
 
 text_file = open(write_to, "w+")
