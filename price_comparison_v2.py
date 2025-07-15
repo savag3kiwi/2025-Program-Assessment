@@ -101,9 +101,6 @@ def currency(x):
 MAX_SPEND = 600
 budget = 0
 
-# initialise variables / non-default options for string checker
-payment_ans = ('cash', 'credit')
-
 # Ticket Price List
 # CHILD_PRICE = 7.50
 # ADULT_PRICE = 10.50
@@ -134,14 +131,10 @@ cheese_frame.index = numpy.arange(1, len(cheese_frame) + 1)
 # Program main heading
 print(make_statement("The Online Cheese Market", "🧀"))
 
-# Ask user for their name (and check it's not blank)
-print()
-name = not_blank("Name: ")
-
 # Ask user if they want to see the instructions
 # display them if necessary
 print()
-want_instructions = string_check(f"Hi {name}, do you want to see the instructions? ")
+want_instructions = string_check(f"Hi, do you want to see the instructions? ")
 
 if want_instructions == "yes":
     instructions()
@@ -149,20 +142,28 @@ if want_instructions == "yes":
 print()
 
 # Ask for the users budget
-budget = int_check("What is your budget? ")
+budget = int_check("What is your budget (Maximum budget of $600)? ")
+
+print(f"Your budget is ${budget}")
+print()
 
 # import list of cheeses
 cheese_string = cheese_frame.to_string(index=False)
 
 # Loop to get name, age and payment details
 while budget <= MAX_SPEND:
-    pay_method = "cash"
-    # if name is exit code, break out of loop
-    # if name == "xxx":
-    # break
+    # Ask user for their name (and check it's not blank)
+    print()
+    name = not_blank("Name: ")
 
-    # Ask user for payment method (cash / credit / ca / cr)
-    # pay_method = string_check("Payment method: ", payment_ans, 2)
+    # if name is exit code, break out of loop
+    if name == "xxx":
+        break
+
+    else:
+        print("Here is a list of Cheese you can choose from.")
+        print(cheese_string)
+        print()
 
     # add name, ticket cost and surcharge to
     # all_cheese.append(name)
@@ -174,7 +175,7 @@ while budget <= MAX_SPEND:
 # End of Ticket Loop
 
 # Calculate the total payable for each ticket
-cheese_frame['Total'] = cheese_frame['Cheese Price']  # + mini_movie_frame['Surcharge']
+cheese_frame['Total'] = cheese_frame['Cheese Price']
 cheese_frame['Profit'] = cheese_frame['Cheese Price'] - 5
 
 # Work out total paid and total profit...
