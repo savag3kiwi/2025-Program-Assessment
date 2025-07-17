@@ -65,23 +65,18 @@ def not_blank(question):
         print("Sorry, this can't be blank. Please try again.")
 
 
-def int_check(question):
-    """Checks users enter an integer / float that is more than zero (or the 'xxx' exit code)"""
+def int_check(question, low, high):
+    """Checks users enter an integer between two values"""
 
-    error = "Oops - please enter an integer."
+    error = f"Oops - please enter an integer between {low} and {high}."
 
     while True:
-        response = input(question).lower()
-
-        # check for the exit code
-        if response == "xxx":
-            return response
 
         try:
             # Change the response to an integer and check that it's more than zero
-            response = int(response)
+            response = int(input(question))
 
-            if response > 0:
+            if low <= response <= high:
                 return response
             else:
                 print(error)
@@ -101,25 +96,15 @@ def currency(x):
 MAX_SPEND = 600
 budget = 0
 
-# Ticket Price List
-# CHILD_PRICE = 7.50
-# ADULT_PRICE = 10.50
-# SENIOR_PRICE = 6.50
-
-# Credit card surcharge (currently 5%)
-# CREDIT_SURCHARGE = 0.05
-
-# lists to hold ticket details
+# lists to hold cheese details
 all_cheese = ["Colby", "Mozzarella", "Cheddar", "Gouda", "Brie",
               "Manchego", "Roquefort", "Parmigiano Reggiano",
               "Époisses de Bourgogne", "Pule Cheese"]
 all_cheese_costs = [20, 30, 35, 40, 60, 80, 100, 150, 200, 300]
-# all_surcharges = [0, 0, 0.53, 0.53, 0]
 
 cheese_dict = {
     'Cheese': all_cheese,
     'Cheese Price': all_cheese_costs,
-    # 'Surcharge': all_surcharges
 }
 
 # create dataframe / table from dictionary
@@ -131,10 +116,14 @@ cheese_frame.index = numpy.arange(1, len(cheese_frame) + 1)
 # Program main heading
 print(make_statement("The Online Cheese Market", "🧀"))
 
+# Ask user for their name (and check it's not blank)
+print()
+name = not_blank("Name: ")
+
 # Ask user if they want to see the instructions
 # display them if necessary
 print()
-want_instructions = string_check(f"Hi, do you want to see the instructions? ")
+want_instructions = string_check(f"Hi {name}, do you want to see the instructions? ")
 
 if want_instructions == "yes":
     instructions()
@@ -142,7 +131,7 @@ if want_instructions == "yes":
 print()
 
 # Ask for the users budget
-budget = int_check("What is your budget (Maximum budget of $600)? ")
+budget = int_check("What is your budget (Maximum budget of $600)? ", 20, 600)
 
 print(f"Your budget is ${budget}")
 print()
@@ -152,27 +141,23 @@ cheese_string = cheese_frame.to_string(index=False)
 
 # Loop to get name, age and payment details
 while budget <= MAX_SPEND:
-    # Ask user for their name (and check it's not blank)
+
     print()
-    name = not_blank("Name: ")
 
-    # if name is exit code, break out of loop
-    if name == "xxx":
-        break
+    # Display menu items
+    print("Here is a list of Cheese you can choose from.")
+    print(cheese_frame)
+    print()
 
-    else:
-        print("Here is a list of Cheese you can choose from.")
-        print(cheese_string)
-        print()
+    # Prompt user to select a row from the index
+    try:
+        # ask user for their choice
+        choice = int_check("Choose your cheese with the number of the row: ", 1, 10)
 
-    # add name, ticket cost and surcharge to
-    # all_cheese.append(name)
-    # all_cheese_costs.append(cheese_price)
-    # all_surcharges.append(surcharge)
+    except ValueError:
+        print("Please enter a valid number")
 
-    # cheese_sold += 1
-
-# End of Ticket Loop
+# End of Loop
 
 # Calculate the total payable for each ticket
 cheese_frame['Total'] = cheese_frame['Cheese Price']
@@ -194,7 +179,7 @@ total_profit = cheese_frame['Profit'].sum()
 # profit_won = cheese_frame.at[winner_index, 'Profit']
 
 # Currency Formatting (uses currency function)
-add_dollars = ['Cheese Price', 'Surcharge', 'Total', 'Profit']
+add_dollars = ['Cheese Price', 'Total', 'Profit']
 for var_item in add_dollars:
     cheese_frame[var_item] = cheese_frame[var_item].apply(currency)
 
