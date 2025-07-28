@@ -43,8 +43,8 @@ For each buyer enter ...
 
 The program will record the purchases and calculate the cost.
 
-Users can buy multiple cheeses or enter the 
-exit code ('xxx'), and the program will end
+Users can buy multiple cheeses or say no to repurchasing
+and the program will end
 
 It will finally show an itemised list of all the purchases and will save it
 to a writing file
@@ -181,43 +181,26 @@ while budget <= MAX_SPEND:
         if repurchase == "no":
             break
 
-        else:
-            print("Invalid number. Please enter a number 1-10")
-
     except ValueError:
         print("Please enter a valid number")
 
 # End of Loop
 
 # Calculate the total payable for each ticket
-cheese_frame['Total'] = cheese_frame['Cheese Price']
-cheese_frame['Profit'] = cheese_frame['Cheese Price'] - 5
+# cheese_frame['Total'] = cheese_frame['Cheese Price']
+# cheese_frame['Profit'] = cheese_frame['Cheese Price'] - 5
 
 # Work out total paid and total profit...
-total_paid = cheese_frame['Total'].sum()
-total_profit = cheese_frame['Profit'].sum()
-
-# choose random winner...
-# winner = random.choice(all_cheese)
-
-# find index of winner (ie: position in list)
-# winner_index = all_cheese.index(winner)
-
-# retrieve Winner Ticket Price and Profit (so we can adjust
-# profit numbers so that the winning ticket is excluded)
-# ticket_won = cheese_frame.at[winner_index, 'Total']
-# profit_won = cheese_frame.at[winner_index, 'Profit']
+# total_paid = cheese_frame['Total'].sum()
+# total_profit = cheese_frame['Profit'].sum()
 
 # Currency Formatting (uses currency function)
-add_dollars = ['Cheese Price', 'Total', 'Profit']
-for var_item in add_dollars:
-    cheese_frame[var_item] = cheese_frame[var_item].apply(currency)
+# add_dollars = ['Cheese Price', 'Total', 'Profit']
+# for var_item in add_dollars:
+# cheese_frame[var_item] = cheese_frame[var_item].apply(currency)
 
-# Output cheese frame without index
-# cheese_string = cheese_frame.to_string(index=False)
-
-total_paid_string = f"Total Paid: ${total_paid:.2f}"
-total_profit_string = f"Total Profit: ${total_profit:.2f}"
+# total_paid_string = f"Total Paid: ${total_paid:.2f}"
+# total_profit_string = f"Total Profit: ${total_profit:.2f}"
 
 # winner announcement
 # lucky_winner_string = (f"The lucky winner is {winner}. "
